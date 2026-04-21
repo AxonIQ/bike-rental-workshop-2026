@@ -1,0 +1,46 @@
+
+# 6ab2acb3-c26d-4da2-82f2-3fc657016d4d
+# 5a24c842-3f9a-4730-9f1d-cbc25064164b
+# bb372c03-cbec-48df-902a-2a4cde8df728
+# c7f6287f-927b-4b78-9c17-ff6d743762ae
+# b4d7a0da-4665-4b54-93d4-a374fc0a58ec
+
+### Generate bikes
+POST {{rental}}/?bikeType=city
+Accept: application/json
+
+### Generate randomBike
+POST {{rental}}/randomBike?bikeType=city
+Accept: application/json
+
+### List available bikes
+GET {{rental}}/bikes
+Accept: application/json
+
+### Get bike status
+GET {{rental}}/bikes/6ab2acb3-c26d-4da2-82f2-3fc657016d4d
+Accept: application/json
+
+### Request Bike
+POST {{rental}}/requestBike?renter=BikeRider&bikeId=6ab2acb3-c26d-4da2-82f2-3fc657016d4d
+Accept: application/json
+
+### Find payment ID
+GET {{payment}}/findPayment?reference=18ea3d24-0fa0-40dd-bb44-15e56bb78ba6
+Accept: application/json
+
+### Accept payment
+POST {{payment}}/acceptPayment?id=3fdfc5b2-5a5c-4166-b0c0-04aafdec3628
+Accept: application/json
+
+### Reject payment
+POST {{payment}}/rejectPayment?id=d8be5441-2fde-4bc4-b784-f375734509f9
+Accept: application/json
+
+### Get bike status
+GET {{rental}}/bikes/91480d9a-20e3-43a7-a88f-8712365a4f4c
+Accept: application/json
+
+### Return bike
+POST {{rental}}/returnBike?location=New York&bikeId=40208d8f-f338-4ba3-835e-b5026e6bde3e
+Accept: application/json

@@ -1,0 +1,68 @@
+package io.axoniq.demo.bikerental.domain;
+
+import io.axoniq.demo.bikerental.commands.*;
+import io.axoniq.demo.bikerental.events.*;
+import org.axonframework.test.aggregate.AggregateTestFixture;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.axonframework.test.matchers.Matchers.andNoMore;
+import static org.axonframework.test.matchers.Matchers.exactSequenceOf;
+import static org.axonframework.test.matchers.Matchers.matches;
+import static org.axonframework.test.matchers.Matchers.messageWithPayload;
+
+class BikeTest {
+
+    private AggregateTestFixture<Bike> fixture;
+
+    @BeforeEach
+    void setUp() {
+        fixture = new AggregateTestFixture<>(Bike.class);
+    }
+
+    /*
+    @BeforeEach
+    void setUp() {
+        var bikeModule = EventSourcedEntityModule.autodetected(String.class, Bike.class);
+        var configurer = EventSourcingConfigurer.create()
+                .registerEntity(bikeModule)
+        fixture = AxonTestFixture.with(configurer, c -> c.disableAxonServer());
+    }
+
+    @AfterEach
+    void tearDown() {
+        fixture.stop();
+    }
+    * */
+
+    // https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764668702272970&cot=14
+    @Test
+    void shouldRegisterBike() {
+        fixture.givenNoPriorActivity()
+               .when(new RegisterBikeCommand("bikeId", "city", "Amsterdam"))
+               .expectEvents(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"));
+    }
+
+    @Test
+    void shouldRequestAvailableBike() {
+        fixture.given(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"))
+               .when(new RequestBikeCommand("bikeId", "rider"))
+               .expectResultMessagePayloadMatching(matches(String.class::isInstance))
+               .expectEventsMatching(exactSequenceOf(
+                       messageWithPayload(matches((BikeRequestedEvent e) ->
+                                                          e.bikeId().equals("bikeId")
+                                                                  && e.renter().equals("rider"))),
+                       andNoMore()));
+    }
+
+    @Test
+    void shouldNotRequestAlreadyRequestedBike() {
+        fixture.given(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
+                      new BikeRequestedEvent("bikeId", "rider", "rentalId"))
+               .when(new RequestBikeCommand("bikeId", "rider"))
+               .expectNoEvents()
+               .expectException(IllegalStateException.class);
+
+    }
+
+}
