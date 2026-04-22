@@ -40,9 +40,8 @@ public class DispatchTimeCommandDispatchInterceptor implements MessageDispatchIn
 
 
         return (index, command) -> {
-            command.andMetaData(Map.of("dispatchTime", Instant.now().toString()));
             // Return the command unmodified (you could modify it here if needed)
-            return command;
+            return command.withMetaData(Map.of("dispatchTime", Instant.now().toString()));
         };
     }
 }
