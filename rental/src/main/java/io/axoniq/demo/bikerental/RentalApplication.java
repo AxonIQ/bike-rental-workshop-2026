@@ -50,7 +50,6 @@ public class RentalApplication {
                 .create()
                 .messaging(c -> c.registerCommandDispatchInterceptor(b -> new DispatchTimeCommandDispatchInterceptor()))
                  .build();
-
     }
     */
 
@@ -86,4 +85,16 @@ public class RentalApplication {
                                        );
     }
      */
+
+    /*
+    @Bean
+    EventProcessorDefinition orderProcessor() {
+        return EventProcessorDefinition.pooledStreaming("order-processor")
+                .assigningHandlers(descriptor ->
+                        descriptor.beanName().startsWith("order"))
+                .customized(config -> config
+                        .deadLetterQueue(dlq -> dlq
+                                .enabled()
+                                .cacheMaxSize(2048)));
+    }*/
 }
