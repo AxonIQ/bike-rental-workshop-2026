@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  axonserver-1:
+    image: docker.axoniq.io/axoniq/axonserver:2025.2.7
+    #image: eu.gcr.io/axoniq-devops/axonserver:2026.0.0-SNAPSHOT-jdk-21-nonroot
+    hostname: axonserver-1
+    environment:
+      - axoniq_console_authentication=e6953958-0-asc:c390b8df56ce43c981cdea24799497cf
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'
+    networks:
+      - axon-server
+
+networks:
+  axon-server:
