@@ -13,10 +13,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+@Import(AxonConfig.class)
 @EntityScan(basePackageClasses = {BikeStatus.class, SagaEntry.class, TokenEntry.class})
 @SpringBootApplication
 public class RentalApplication {
