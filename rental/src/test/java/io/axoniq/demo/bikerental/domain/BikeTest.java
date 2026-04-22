@@ -2,7 +2,12 @@ package io.axoniq.demo.bikerental.domain;
 
 import io.axoniq.demo.bikerental.commands.*;
 import io.axoniq.demo.bikerental.events.*;
+import org.axonframework.eventsourcing.configuration.EventSourcedEntityModule;
+import org.axonframework.eventsourcing.configuration.EventSourcingConfigurer;
+import org.axonframework.messaging.commandhandling.configuration.CommandHandlingModule;
 import org.axonframework.test.aggregate.AggregateTestFixture;
+import org.axonframework.test.fixture.AxonTestFixture;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,25 +22,24 @@ class BikeTest {
 
     private AggregateTestFixture<Bike> fixture;
 
-    @BeforeEach
-    void setUp() {
-        fixture = new AggregateTestFixture<>(Bike.class);
-    }
-
     /*
     @BeforeEach
     void setUp() {
-        var bikeModule = EventSourcedEntityModule.autodetected(String.class, Bike.class);
+        var bikeModule = EventSourcedEntityModule
+                .autodetected(String.class, Bike.class);
+        var commandHandlerModule = CommandHandlingModule.named("Rental")
+                .commandHandlers().autodetectedCommandHandlingComponent(c -> new BikeCommands());
         var configurer = EventSourcingConfigurer.create()
-                .registerEntity(bikeModule)
-        fixture = AxonTestFixture.with(configurer, c -> c.disableAxonServer());
+                .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)))
+                .registerEntity(bikeModule);
+        fixture = AxonTestFixture.with(configurer, AxonTestFixture.Customization::disableAxonServer);
     }
 
     @AfterEach
-    void tearDown() {
-        fixture.stop();
+    void tearDown() {+
+            fixture.stop();
     }
-    * */
+    */
 
     // https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764668702272970&cot=14
     @Test
