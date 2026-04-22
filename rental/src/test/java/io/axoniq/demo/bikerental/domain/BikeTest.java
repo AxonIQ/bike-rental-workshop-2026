@@ -2,12 +2,7 @@ package io.axoniq.demo.bikerental.domain;
 
 import io.axoniq.demo.bikerental.commands.*;
 import io.axoniq.demo.bikerental.events.*;
-import org.axonframework.eventsourcing.configuration.EventSourcedEntityModule;
-import org.axonframework.eventsourcing.configuration.EventSourcingConfigurer;
-import org.axonframework.messaging.commandhandling.configuration.CommandHandlingModule;
 import org.axonframework.test.aggregate.AggregateTestFixture;
-import org.axonframework.test.fixture.AxonTestFixture;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +17,10 @@ class BikeTest {
 
     private AggregateTestFixture<Bike> fixture;
 
+    @BeforeEach
+    void setUp() {
+        fixture = new AggregateTestFixture<>(Bike.class);
+    }
     /*
     @BeforeEach
     void setUp() {

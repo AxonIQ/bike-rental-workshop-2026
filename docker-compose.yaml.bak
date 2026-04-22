@@ -1,0 +1,61 @@
+networks:
+  axon-cluster:
+    driver: bridge
+
+services:
+  # PRIMARY node - first node in the cluster
+  axonserver-1:
+    #image: docker.axoniq.io/axoniq/axonserver:2025.2.6
+    image: eu.gcr.io/axoniq-devops/axonserver:2026.0.0-SNAPSHOT-jdk-21-nonroot
+    hostname: axonserver-1
+    networks:
+      - axon-cluster
+    environment:
+      - axoniq_console_authentication=e6953958-0-asc:c390b8df56ce43c981cdea24799497cf
+      #- axoniq_console_authentication=e6f276c5-0-asc:79d022bd78834a0da750e6493db739d8
+      #- axoniq_console_host=34.110.221.42
+      - control-tower.dev.axoniq.net
+      #- axoniq_console_port=7000
+      - AXONIQ_AXONSERVER_NAME=axonserver-1
+      - AXONIQ_AXONSERVER_HOSTNAME=localhost
+      - AXONIQ_AXONSERVER_INTERNAL_HOSTNAME=axonserver-1
+      - AXONIQ_AXONSERVER_MIGRATION_ENABLED=true
+      #- AXONIQ_AXONSERVER_AUTOCLUSTER_FIRST=axonserver-1:8124
+      #- AXONIQ_AXONSERVER_AUTOCLUSTER_CONTEXTS=_admin,default
+      #- AXONIQ_AXONSERVER_AUTOCLUSTER_DCB=true
+      #- axoniq_console_authentication=e6f276c5-0-asc:79d022bd78834a0da750e6493db739d8
+      #- axoniq_console_authentication=4e27145d-0-asc:ef6c18fe4f654442a45cff2f4f490508
+      #- AXONIQ_AXONSERVER_EVENT_SEGMENT_SIZE=100      # 1MB segments
+      #- AXONIQ_AXONSERVER_SNAPSHOT_SEGMENT_SIZE=100   # 1MB segments
+      #- axoniq_console_host=34.110.221.42
+      #- axoniq_axonserver_devmode_enabled=true
+      #- axoniq_console_port=7000
+   # volumes:
+   #   - ./data/data:/axonserver/data
+   #   - ./data/events:/axonserver/events
+   #   - ./data/log:/axonserver/log
+   #   - ./axoniq-server.license:/axonserver/config/axoniq.license
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -q http://localhost:8024/actuator/info"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: axoniq-build-postgres
+    environment:
+      POSTGRES_DB: axoniq_build_db
+      POSTGRES_USER: axon_user
+      POSTGRES_PASSWORD: axon_password
+    ports:
+      - "5412:5432"
+    #volumes:
+     # - ./postgres_data:/var/lib/postgresql/data
+      #- ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - axon-cluster
