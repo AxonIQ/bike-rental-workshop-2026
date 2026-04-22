@@ -6,6 +6,8 @@ import org.axonframework.test.aggregate.AggregateTestFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
+
 import static org.axonframework.test.matchers.Matchers.andNoMore;
 import static org.axonframework.test.matchers.Matchers.exactSequenceOf;
 import static org.axonframework.test.matchers.Matchers.matches;
@@ -45,13 +47,15 @@ class BikeTest {
 
     @Test
     void shouldRequestAvailableBike() {
+        var rentalReference = UUID.randomUUID().toString();
         fixture.given(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"))
-               .when(new RequestBikeCommand("bikeId", "rider"))
+               .when(new RequestBikeCommand("bikeId", "rider", rentalReference))
                .expectResultMessagePayloadMatching(matches(String.class::isInstance))
                .expectEventsMatching(exactSequenceOf(
                        messageWithPayload(matches((BikeRequestedEvent e) ->
                                                           e.bikeId().equals("bikeId")
-                                                                  && e.renter().equals("rider"))),
+                                                                  && e.renter().equals("rider")
+                                                            && e.rentalReference().equals(rentalReference))),
                        andNoMore()));
     }
 
@@ -59,7 +63,7 @@ class BikeTest {
     void shouldNotRequestAlreadyRequestedBike() {
         fixture.given(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
                       new BikeRequestedEvent("bikeId", "rider", "rentalId"))
-               .when(new RequestBikeCommand("bikeId", "rider"))
+               .when(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
                .expectNoEvents()
                .expectException(IllegalStateException.class);
 

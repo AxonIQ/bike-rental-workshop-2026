@@ -68,4 +68,20 @@ public class RentalApplication {
                 eventConverter
         );
     }*/
+
+    /*
+    @Bean
+    public EventProcessorDefinition exampleProcessorDefinition() {
+        return EventProcessorDefinition.pooledStreaming("example-processor")
+                                       .assigningHandlers(EventHandlerSelector.matchesNamespaceOnType(
+                                               "orders"
+                                       ))
+                                       .customized(config -> config
+                                               .initialSegmentCount(4)
+                                               .batchSize(100)
+                                               .claimExtensionThreshold(5000)
+                                               .tokenClaimInterval(5000)
+                                       );
+    }
+     */
 }
