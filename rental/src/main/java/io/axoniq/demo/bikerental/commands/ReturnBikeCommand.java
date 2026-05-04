@@ -1,10 +1,11 @@
 package io.axoniq.demo.bikerental.commands;
 
-import org.axonframework.commandhandling.RoutingKey;
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
+import org.axonframework.messaging.commandhandling.annotation.Command;
+import org.axonframework.modelling.annotation.TargetEntityId;
 
+@Command(namespace = "rental", name = "ReturnBikeCommand", routingKey = "bikeId")
 public record ReturnBikeCommand(
-        @TargetAggregateIdentifier String bikeId,
+        @TargetEntityId String bikeId,
         String location) {
 
 }

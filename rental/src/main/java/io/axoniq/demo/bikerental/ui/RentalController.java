@@ -7,9 +7,8 @@ import io.axoniq.demo.bikerental.commands.RequestBikeCommand;
 import io.axoniq.demo.bikerental.commands.ReturnBikeCommand;
 import io.axoniq.demo.bikerental.query.FindAllBikes;
 import io.axoniq.demo.bikerental.query.FindOneBike;
-import org.axonframework.commandhandling.gateway.CommandGateway;
-import org.axonframework.messaging.responsetypes.ResponseTypes;
-import org.axonframework.queryhandling.QueryGateway;
+import org.axonframework.messaging.commandhandling.gateway.CommandGateway;
+import org.axonframework.messaging.queryhandling.gateway.QueryGateway;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,35 +40,34 @@ public class RentalController {
         CompletableFuture<Void> all = CompletableFuture.completedFuture(null);
         for (int i = 0; i < BIKES.size(); i++) {
             all = CompletableFuture.allOf(all,
-                                          commandGateway.send(new RegisterBikeCommand(BIKES.get(i).toString(), bikeType, randomLocation())));
+                                          commandGateway.send(new RegisterBikeCommand(BIKES.get(i).toString(), bikeType, randomLocation())).resultAs(Void.class));
         }
         return all;
     }
 
     @PostMapping("/randomBike")
     public CompletableFuture<String> randomBike(@RequestParam(value = "bikeType") String bikeType) {
-        return commandGateway.send(new RegisterBikeCommand(UUID.randomUUID().toString(), bikeType, randomLocation()));
+        return commandGateway.send(new RegisterBikeCommand(UUID.randomUUID().toString(), bikeType, randomLocation())).resultAs(String.class);
     }
 
     @PostMapping("/requestBike")
     public CompletableFuture<String> requestBike(@RequestParam("bikeId") String bikeId, @RequestParam("renter") String renter) {
-        return commandGateway.send(new RequestBikeCommand(bikeId, renter, UUID.randomUUID().toString()));
+        return commandGateway.send(new RequestBikeCommand(bikeId, renter, UUID.randomUUID().toString())).resultAs(String.class);
     }
 
     @PostMapping("/returnBike")
     public CompletableFuture<String> returnBike(@RequestParam("bikeId") String bikeId, @RequestParam("location") String location) {
-        return commandGateway.send(new ReturnBikeCommand(bikeId, location != null ? location : randomLocation()));
+        return commandGateway.send(new ReturnBikeCommand(bikeId, location != null ? location : randomLocation())).resultAs(String.class);
     }
 
     @GetMapping("/bikes")
     public CompletableFuture<List<BikeStatus>> findAll() {
-        var result = queryGateway.query("findAll", new FindAllBikes(), ResponseTypes.multipleInstancesOf(BikeStatus.class));
-        return result;
+        return queryGateway.queryMany(new FindAllBikes(), BikeStatus.class);
     }
 
     @GetMapping("/bikes/{bikeId}")
     public CompletableFuture<BikeStatus> findStatus(@PathVariable("bikeId") String bikeId) {
-        return queryGateway.query("findOne", new FindOneBike(bikeId), BikeStatus.class);
+        return queryGateway.query(new FindOneBike(bikeId), BikeStatus.class);
     }
 
     private String randomLocation() {

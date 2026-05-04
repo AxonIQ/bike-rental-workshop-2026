@@ -15,9 +15,8 @@
         <maven.compiler.source>25</maven.compiler.source>
         <maven.compiler.target>25</maven.compiler.target>
         <java.version>25</java.version>
-        <!--axon.version>5.1.0-RC2</axon.version>-->
+        <axon.version>5.1.0-RC2</axon.version>
         <jackson.version>2.21.2</jackson.version>
-        <axon.version>4.13.0</axon.version>
     </properties>
 
     <groupId>bikerental</groupId>
@@ -33,7 +32,7 @@
 
         <!-- Axon Framework Dependencies -->
 
-        <!--
+
         <dependency>
             <groupId>org.axonframework</groupId>
             <artifactId>axon-messaging</artifactId>
@@ -70,26 +69,12 @@
             <version>${axon.version}</version>
             <scope>test</scope>
         </dependency>
-        -->
 
-        <dependency>
+        <!--dependency>
             <groupId>io.axoniq.platform</groupId>
             <artifactId>framework-client-spring-boot-starter</artifactId>
             <version>2.0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.axonframework</groupId>
-            <artifactId>axon-spring-boot-starter</artifactId>
-            <version>${axon.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.axonframework</groupId>
-            <artifactId>axon-test</artifactId>
-            <version>${axon.version}</version>
-            <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
         <dependency>
             <groupId>io.axoniq.demo.bikerental</groupId>

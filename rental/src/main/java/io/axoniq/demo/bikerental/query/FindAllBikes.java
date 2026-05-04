@@ -1,4 +1,6 @@
 package io.axoniq.demo.bikerental.query;
 
-public record FindAllBikes() {
-}
+import org.axonframework.messaging.queryhandling.annotation.Query;
+
+@Query(namespace = "rental", name = "FindAllBikes")
+public record FindAllBikes() {}

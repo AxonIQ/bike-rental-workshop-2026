@@ -3,11 +3,11 @@ package io.axoniq.demo.bikerental;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.axoniq.demo.bikerental.commands.BikeStatus;
 import io.axoniq.demo.bikerental.common.DispatchTimeCommandDispatchInterceptor;
-import org.axonframework.config.Configuration;
-import org.axonframework.deadline.DeadlineManager;
-import org.axonframework.deadline.SimpleDeadlineManager;
-import org.axonframework.eventhandling.tokenstore.jpa.TokenEntry;
-import org.axonframework.modelling.saga.repository.jpa.SagaEntry;
+import org.axonframework.axonserver.connector.AxonServerConnectionManager;
+import org.axonframework.axonserver.connector.event.AggregateBasedAxonServerEventStorageEngine;
+import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
+import org.axonframework.messaging.eventhandling.conversion.EventConverter;
+import org.axonframework.messaging.eventhandling.processing.streaming.token.store.jpa.TokenEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Import(AxonConfig.class)
-@EntityScan(basePackageClasses = {BikeStatus.class, SagaEntry.class, TokenEntry.class})
+@EntityScan(basePackageClasses = {BikeStatus.class, TokenEntry.class})
 @SpringBootApplication
 public class RentalApplication {
 
@@ -38,10 +38,10 @@ public class RentalApplication {
                 ObjectMapper.DefaultTyping.JAVA_LANG_OBJECT);
     }
 
-    @Bean
+    /*@Bean
     public DeadlineManager deadlineManager(Configuration configuration) {
         return SimpleDeadlineManager.builder().scopeAwareProvider(configuration.scopeAwareProvider()).build();
-    }
+    }*/
 
      /*
     @Bean
@@ -53,12 +53,13 @@ public class RentalApplication {
     }
     */
 
+    /*
     @Autowired
     public void registerCommandInterceptor(Configuration configuration) {
         configuration.commandBus().registerDispatchInterceptor(new DispatchTimeCommandDispatchInterceptor());
-    }
+    }*/
 
-    /*
+
     @Bean
     public EventStorageEngine storageEngine(AxonServerConnectionManager connectionManager,
                                             EventConverter eventConverter) {
@@ -68,7 +69,7 @@ public class RentalApplication {
                 connectionManager.getConnection(),
                 eventConverter
         );
-    }*/
+    }
 
     /*
     @Bean

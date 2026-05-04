@@ -1,10 +1,11 @@
 package io.axoniq.demo.bikerental.commands;
 
-import org.axonframework.commandhandling.RoutingKey;
-import org.axonframework.modelling.command.TargetAggregateIdentifier;
+import org.axonframework.messaging.commandhandling.annotation.Command;
+import org.axonframework.modelling.annotation.TargetEntityId;
 
+@Command(namespace = "rental", name = "RejectRequestCommand", routingKey = "bikeId")
 public record RejectRequestCommand(
-        @TargetAggregateIdentifier
+        @TargetEntityId
         String bikeId,
         String renter) {
 

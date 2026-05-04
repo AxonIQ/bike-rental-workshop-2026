@@ -1,6 +1,5 @@
 package io.axoniq.demo.bikerental.query;
 
-/*
 import org.axonframework.eventsourcing.configuration.EventSourcingConfigurer;
 import org.axonframework.messaging.eventhandling.configuration.EventProcessorModule;
 import org.axonframework.messaging.eventhandling.processing.streaming.pooled.PooledStreamingEventProcessorModule;
@@ -12,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-
+/*
 public class CourseStatsProjectionAxonFixtureTest {
 
     private AxonTestFixture fixture;

@@ -1,25 +1,26 @@
 package io.axoniq.demo.bikerental.common;
 
-import org.axonframework.commandhandling.CommandMessage;
-import org.axonframework.messaging.MessageDispatchInterceptor;
+import org.axonframework.messaging.commandhandling.CommandMessage;
+import org.axonframework.messaging.core.MessageDispatchInterceptor;
+import org.axonframework.messaging.core.MessageDispatchInterceptorChain;
+import org.axonframework.messaging.core.MessageStream;
+import org.axonframework.messaging.core.unitofwork.ProcessingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.function.BiFunction;
+import java.util.Collections;
 
 /**
  * Command dispatch interceptor that logs information about dispatched commands.
  * This interceptor is invoked before commands are dispatched to the command bus.
  */
-public class DispatchTimeCommandDispatchInterceptor implements MessageDispatchInterceptor<CommandMessage<?>> {
+public class DispatchTimeCommandDispatchInterceptor implements MessageDispatchInterceptor<CommandMessage> {
 
     private static final Logger logger = LoggerFactory.getLogger(DispatchTimeCommandDispatchInterceptor.class);
 
-    /*
+
     @Override
     public MessageStream<?> interceptOnDispatch(CommandMessage message,
                                                 @Nullable ProcessingContext context,
@@ -32,9 +33,8 @@ public class DispatchTimeCommandDispatchInterceptor implements MessageDispatchIn
         // Continue chain with modified message
         return chain.proceed(enrichedMessage, context);
     }
-    * */
 
-    @Override
+    /*@Override
     public BiFunction<Integer, CommandMessage<?>, CommandMessage<?>> handle(
             List<? extends CommandMessage<?>> messages) {
 
@@ -43,5 +43,5 @@ public class DispatchTimeCommandDispatchInterceptor implements MessageDispatchIn
             // Return the command unmodified (you could modify it here if needed)
             return command.withMetaData(Map.of("dispatchTime", Instant.now().toString()));
         };
-    }
+    }*/
 }
