@@ -27,7 +27,7 @@ class BikeTest {
         var configurer = EventSourcingConfigurer.create()
                 .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)))
                 .registerEntity(bikeModule);
-        fixture = AxonTestFixture.with(configurer, AxonTestFixture.Customization::disableAxonServer);
+        fixture = AxonTestFixture.with(configurer);
     }
 
     @AfterEach
