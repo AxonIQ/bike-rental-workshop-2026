@@ -17,6 +17,7 @@
         <java.version>25</java.version>
         <axoniq.version>5.1.0</axoniq.version>
         <jackson.version>2.21.2</jackson.version>
+        <workflow.version>0.1.0</workflow.version>
     </properties>
 
     <groupId>bikerental</groupId>
@@ -70,6 +71,13 @@
             <artifactId>axon-test</artifactId>
             <version>${axoniq.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Source: https://mvnrepository.com/artifact/io.axoniq.framework.workflow/axon-workflow-spring-boot -->
+        <dependency>
+            <groupId>io.axoniq.framework.workflow</groupId>
+            <artifactId>axon-workflow-spring-boot</artifactId>
+            <version>${workflow.version}</version>
         </dependency>
 
     </dependencies>

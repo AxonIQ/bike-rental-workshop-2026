@@ -22,7 +22,7 @@ GET {{rental}}/bikes/6ab2acb3-c26d-4da2-82f2-3fc657016d4d
 Accept: application/json
 
 ### Request Bike
-POST {{rental}}/requestBike?renter=BikeRider&bikeId=6ab2acb3-c26d-4da2-82f2-3fc657016d4d
+POST {{rental}}/requestBike?renter=BikeRider&bikeId=1752c705-aecf-44cb-b07a-2fb71d597247
 Accept: application/json
 
 ### Find payment ID
