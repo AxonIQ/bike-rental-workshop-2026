@@ -39,4 +39,10 @@ public class RentalApplication {
     public DeadlineManager deadlineManager(Configuration configuration) {
         return SimpleDeadlineManager.builder().scopeAwareProvider(configuration.scopeAwareProvider()).build();
     }
+
+    @Autowired
+    public void registerCommandInterceptor(Configuration configuration) {
+        configuration.commandBus().registerDispatchInterceptor(new DispatchTimeCommandDispatchInterceptor());
+    }
+
 }
