@@ -3,6 +3,183 @@
 Welcome to this workshop! You will build a "bike rental" sample application
 with [Axon Framework and Axon Server](https://developer.axoniq.io/).
 
+## Quick Start Guide
+
+### Prerequisites
+
+* JDK version 17 or higher (currently using JDK 25)
+* Maven 3.6+ (or use the included Maven wrapper `./mvnw`)
+* Docker (optional, for running Axon Server)
+
+### Running the Application
+
+#### 1. Start Axon Server
+
+Axon Server is the event store and message routing infrastructure. Start it using Docker:
+
+```bash
+docker run -d --name axonserver -p 8024:8024 -p 8124:8124 \
+  -e AXONIQ_AXONSERVER_DEVMODE_ENABLED=true \
+  -e AXONIQ_AXONSERVER_STANDALONE=true \
+  axoniq/axonserver
+```
+
+Or if you already have the container:
+
+```bash
+docker start axonserver
+```
+
+**Axon Server Dashboard**: http://localhost:8024
+
+The dashboard provides:
+- Overview of connected applications
+- Event Store browser (Search events)
+- Command and Query monitoring
+- Application health and metrics
+
+#### 2. Build the Project
+
+From the project root directory:
+
+```bash
+./mvnw clean install
+```
+
+Or if you have Maven installed:
+
+```bash
+mvn clean install
+```
+
+#### 3. Start the Rental Application
+
+```bash
+cd rental
+../mvnw spring-boot:run
+```
+
+Or using your IDE:
+- Open `rental/src/main/java/io/axoniq/demo/bikerental/RentalApplication.java`
+- Run the `main` method
+
+The application will start on **port 8080** by default.
+
+#### 4. Start the Payment Application (for full functionality)
+
+In a separate terminal:
+
+```bash
+cd payment
+../mvnw spring-boot:run
+```
+
+### Accessing the Application
+
+#### Web UI
+
+**URL**: http://localhost:8080
+
+The bike rental UI provides:
+- **Register Random Bike**: Add new bikes to the system with a specified type
+- **Request Bike**: Rent a bike by entering bike ID and your name
+- **Return Bike**: Return a bike to any available location
+- **Live Bike Grid**: View all bikes with real-time status updates
+  - Status badges: Available (green), Rented (red), Requested (orange)
+  - Quick actions: Rent or return bikes directly from the grid
+
+#### REST API Endpoints
+
+The application exposes the following REST endpoints:
+
+**Bike Management:**
+- `POST /randomBike?bikeType={type}` - Register a new bike with random ID
+- `GET /bikes` - Get all bikes with their current status
+- `GET /bikes/{bikeId}` - Get status of a specific bike
+
+**Rental Operations:**
+- `POST /requestBike?bikeId={id}&renter={name}` - Request to rent a bike
+- `POST /returnBike?bikeId={id}&location={location}` - Return a bike
+
+**Example requests** are available in `requests.http` file (can be executed in IntelliJ IDEA).
+
+#### API Documentation (Swagger/OpenAPI)
+
+Currently, Swagger/OpenAPI is **not configured** in this project. To add it, you would need to:
+
+1. Add dependency to `rental/pom.xml`:
+```xml
+<dependency>
+    <groupId>org.springdoc</groupId>
+    <artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
+    <version>2.3.0</version>
+</dependency>
+```
+
+2. Access Swagger UI at: http://localhost:8080/swagger-ui.html
+
+### How It Works
+
+This application demonstrates **Event Sourcing**, **CQRS**, and **Saga Pattern** using Axon Framework:
+
+#### Architecture Components
+
+1. **Command Side (Write Model)**
+   - `Bike` aggregate handles commands and publishes events
+   - Commands: `RegisterBikeCommand`, `RequestBikeCommand`, `ReturnBikeCommand`, `ApproveBikeRequestCommand`
+   - Events: `BikeRegisteredEvent`, `BikeRequestedEvent`, `BikeReturnedEvent`, `BikeRequestApprovedEvent`
+
+2. **Query Side (Read Model)**
+   - `BikeStatusProjection` maintains the current state of bikes in H2 database
+   - Handles queries: `FindAllBikes`, `FindOneBike`
+   - Returns `BikeStatus` with current location, renter, and status
+
+3. **Process Manager (Saga)**
+   - `PaymentSaga` coordinates the rental process across Rental and Payment contexts
+   - Ensures payment is confirmed before approving bike rental
+   - Demonstrates distributed transaction handling
+
+4. **Event Store**
+   - Axon Server stores all events
+   - Provides event replay capability
+   - Enables time-travel debugging and audit trails
+
+#### Event Flow Example
+
+When you request a bike:
+
+1. `RequestBikeCommand` → `Bike` aggregate
+2. `BikeRequestedEvent` published
+3. `PaymentSaga` receives event and sends `PreparePaymentCommand`
+4. Payment service confirms payment → `PaymentConfirmedEvent`
+5. `PaymentSaga` receives confirmation and sends `ApproveBikeRequestCommand`
+6. `Bike` aggregate processes approval → `BikeRequestApprovedEvent`
+7. `BikeStatusProjection` updates bike status to "RENTED"
+8. UI reflects the new state
+
+### Troubleshooting
+
+**Port already in use**: If port 8080 is already in use, you can change it by creating `rental/src/main/resources/application.properties`:
+```properties
+server.port=8081
+```
+
+**Axon Server connection issues**: Ensure Axon Server is running and accessible at `localhost:8024`
+
+**Database issues**: Delete the `*.db` files in the project root and restart the application
+
+### Stopping the Application
+
+```bash
+# Stop Axon Server
+docker stop axonserver
+
+# Stop Spring Boot applications
+# Press Ctrl+C in the terminal where they're running
+```
+
+---
+
 ## Installation
 
 The following software must be installed in your local environment:
