@@ -104,7 +104,7 @@ public class BikeStatusProjection {
                 });
     }
 
-    @QueryHandler(queryName = "findAll")
+    /*@QueryHandler(queryName = "findAll")
     public List<BikeStatus> findAll(FindAllBikes findAllBikes) {
         return bikeStatusRepository.findAll();
     }
@@ -117,5 +117,5 @@ public class BikeStatusProjection {
     @QueryHandler(queryName = "findOne")
     public BikeStatus findOne(FindOneBike query) {
         return bikeStatusRepository.findById(query.bikeId()).orElse(null);
-    }
+    }*/
 }
