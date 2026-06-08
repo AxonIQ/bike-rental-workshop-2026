@@ -42,3 +42,4 @@ postgres_data
 axoniq-server.license
 data
 *.db
+.DS_Store
