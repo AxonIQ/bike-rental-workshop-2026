@@ -31,8 +31,28 @@ public class Bike {
         apply(new BikeRegisteredEvent(command.bikeId(), command.bikeType(), command.location()));
     }
 
-    /**
-     * TODO implememnt request bike
-     */
+    //https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764666925523319&cot=14
+    @CommandHandler
+    public String handle(RequestBikeCommand command) {
+        if (!this.isAvailable) {
+            throw new IllegalStateException("Bike is already rented");
+        }
+        apply(new BikeRequestedEvent(command.bikeId(), command.renter(), command.reference()));
+
+        return command.reference();
+    }
+
+    @EventSourcingHandler
+    protected void on(BikeRegisteredEvent event) {
+        this.bikeId = event.bikeId();
+        this.isAvailable = true;
+    }
+
+    @EventSourcingHandler
+    protected void handle(BikeRequestedEvent event) {
+        this.reservedBy = event.renter();
+        this.reservationConfirmed = false;
+        this.isAvailable = false;
+    }
 
 }
