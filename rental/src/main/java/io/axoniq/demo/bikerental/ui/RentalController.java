@@ -51,16 +51,6 @@ public class RentalController {
         return commandGateway.send(new RegisterBikeCommand(UUID.randomUUID().toString(), bikeType, randomLocation()));
     }
 
-    @PostMapping("/requestBike")
-    public CompletableFuture<String> requestBike(@RequestParam("bikeId") String bikeId, @RequestParam("renter") String renter) {
-        return commandGateway.send(new RequestBikeCommand(bikeId, renter, UUID.randomUUID().toString()));
-    }
-
-    @PostMapping("/returnBike")
-    public CompletableFuture<String> returnBike(@RequestParam("bikeId") String bikeId, @RequestParam("location") String location) {
-        return commandGateway.send(new ReturnBikeCommand(bikeId, location != null ? location : randomLocation()));
-    }
-
     @GetMapping("/bikes")
     public CompletableFuture<List<BikeStatus>> findAll() {
         var result = queryGateway.query("findAll", new FindAllBikes(), ResponseTypes.multipleInstancesOf(BikeStatus.class));

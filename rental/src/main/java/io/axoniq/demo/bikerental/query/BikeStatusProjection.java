@@ -22,28 +22,6 @@ public class BikeStatusProjection {
         this.updateEmitter = updateEmitter;
     }
 
-    /*
-    * @EventHandler
-    public Mono<Void> on(BikeRegisteredEvent event, QueryUpdateEmitter updateEmitter) {
-
-        return Mono.fromCallable(() -> {
-                    var bikeStatus = new BikeStatus(
-                        event.bikeId(),
-                        event.bikeType(),
-                        event.location()
-                    );
-
-                    bikeStatusRepository.save(bikeStatus); // blocking
-                    return bikeStatus;
-                })
-                .subscribeOn(Schedulers.boundedElastic())
-                .doOnNext(bs ->
-                    updateEmitter.emit(FindAllBikes.class, _ -> true, bs)
-                )
-                .then();
-    }
-    * */
-
     @EventHandler
     public void on(BikeRegisteredEvent event) {
         var bikeStatus = new BikeStatus(event.bikeId(), event.bikeType(), event.location());
@@ -51,67 +29,9 @@ public class BikeStatusProjection {
         updateEmitter.emit(FindAllBikes.class, q -> true, bikeStatus);
     }
 
-    @EventHandler
-    public void on(BikeRequestedEvent event) {
-        bikeStatusRepository.findById(event.bikeId())
-                .map(bs -> {
-                    bs.requestedBy(event.renter());
-                    return bs;
-                })
-                .ifPresent(bs -> {
-                    updateEmitter.emit(FindAllBikes.class, q -> true, bs);
-                    updateEmitter.emit(FindOneBike.class, q->q.bikeId().equals(event.bikeId()), bs);
-                });
-    }
-
-    @EventHandler
-    public void on(BikeInUseEvent event) {
-        bikeStatusRepository.findById(event.bikeId())
-                .map(bs -> {
-                    bs.rentedBy(event.renter());
-                    return bs;
-                })
-                .ifPresent(bs -> {
-                    updateEmitter.emit(FindAllBikes.class, q -> true, bs);
-                    updateEmitter.emit(FindOneBike.class, q->q.bikeId().equals(event.bikeId()), bs);
-                });
-    }
-
-    @EventHandler
-    public void on(BikeReturnedEvent event) {
-        bikeStatusRepository.findById(event.bikeId())
-                .map(bs -> {
-                    bs.returnedAt(event.location());
-                    return bs;
-                })
-                .ifPresent(bs -> {
-                    updateEmitter.emit(FindAllBikes.class, q -> true, bs);
-                    updateEmitter.emit(FindOneBike.class, q->q.bikeId().equals(event.bikeId()), bs);
-                });
-
-    }
-
-    @EventHandler
-    public void on(RequestRejectedEvent event) {
-        bikeStatusRepository.findById(event.bikeId())
-                .map(bs -> {
-                    bs.returnedAt(bs.getLocation());
-                    return bs;
-                })
-                .ifPresent(bs -> {
-                    updateEmitter.emit(FindAllBikes.class, q -> true, bs);
-                    updateEmitter.emit(FindOneBike.class, q->q.bikeId().equals(event.bikeId()), bs);
-                });
-    }
-
     @QueryHandler(queryName = "findAll")
     public List<BikeStatus> findAll(FindAllBikes findAllBikes) {
         return bikeStatusRepository.findAll();
-    }
-
-    @QueryHandler(queryName = "findAvailable")
-    public List<BikeStatus> findAvailable(String bikeType) {
-        return bikeStatusRepository.findAllByBikeTypeAndStatus(bikeType, RentalStatus.AVAILABLE);
     }
 
     @QueryHandler(queryName = "findOne")
