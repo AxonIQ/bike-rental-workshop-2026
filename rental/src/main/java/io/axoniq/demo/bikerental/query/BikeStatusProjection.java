@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-// @SequencingPolicy(type = PropertySequencingPolicy.class, parameters = {"customerId"})
 @Component
 public class BikeStatusProjection {
 
@@ -22,11 +21,10 @@ public class BikeStatusProjection {
 
     @EventHandler
     public void on(BikeRegisteredEvent event) {
-        var bikeStatus = new BikeStatus(event.bikeId(), event.bikeType(), event.location());
-        bikeStatusRepository.save(bikeStatus);
+        // TODO Store Bike Status
     }
 
-    @QueryHandler(queryName = "findAll")
+    //@QueryHandler(queryName = "findAll")
     public List<BikeStatus> findAll(FindAllBikes findAllBikes) {
         return bikeStatusRepository.findAll();
     }
