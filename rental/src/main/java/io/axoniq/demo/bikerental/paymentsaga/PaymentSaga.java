@@ -1,9 +1,5 @@
 package io.axoniq.demo.bikerental.paymentsaga;
 
-import io.axoniq.demo.bikerental.commands.ApproveRequestCommand;
-import io.axoniq.demo.bikerental.events.BikeRequestedEvent;
-import io.axoniq.demo.bikerental.commands.RejectRequestCommand;
-import io.axoniq.demo.bikerental.events.RequestRejectedEvent;
 import io.axoniq.demo.bikerental.paymentapi.payment.*;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.deadline.DeadlineManager;
