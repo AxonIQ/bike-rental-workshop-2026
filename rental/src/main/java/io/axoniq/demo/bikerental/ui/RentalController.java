@@ -26,7 +26,7 @@ public class RentalController {
         this.commandGateway = commandGateway;
     }
 
-    @PostMapping
+    @PostMapping("/generateBikes")
     public CompletableFuture<Void> generateBikes(@RequestParam(value = "bikeType") String bikeType) {
         CompletableFuture<Void> all = CompletableFuture.completedFuture(null);
         for (int i = 0; i < BIKES.size(); i++) {

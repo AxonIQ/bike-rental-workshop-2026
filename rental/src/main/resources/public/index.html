@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AxonIQ Bike Rental</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .bikes-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .bikes-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .bikes-header h2 {
+            color: #333;
+            font-size: 1.8em;
+            border: none;
+            padding: 0;
+        }
+
+        .refresh-btn {
+            width: auto;
+            padding: 10px 24px;
+            background: #667eea;
+        }
+
+        .bikes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .bike-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .bike-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .bike-card.available {
+            border-left: 5px solid #10b981;
+        }
+
+        .bike-card.rented {
+            border-left: 5px solid #ef4444;
+        }
+
+        .bike-card.requested {
+            border-left: 5px solid #f59e0b;
+        }
+
+        .bike-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .bike-id {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-badge.available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-badge.rented {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.requested {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .bike-info {
+            margin: 12px 0;
+        }
+
+        .bike-info p {
+            color: #666;
+            margin: 6px 0;
+            font-size: 14px;
+        }
+
+        .bike-info strong {
+            color: #333;
+        }
+
+        .bike-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .bike-actions button {
+            padding: 8px 16px;
+            font-size: 14px;
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        .message.success {
+            background: #10b981;
+        }
+
+        .message.error {
+            background: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .controls {
+                grid-template-columns: 1fr;
+            }
+
+            .bikes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚴 AxonIQ Bike Rental</h1>
+            <p>Event-Driven Bike Sharing Platform</p>
+        </header>
+
+        <div class="controls">
+            <div class="card">
+                <h2>Register Random Bike</h2>
+                <form id="randomBikeForm">
+                    <div class="form-group">
+                        <label for="randomBikeType">Bike Type</label>
+                        <input type="text" id="randomBikeType" placeholder="e.g., Mountain, Road, Electric" required>
+                    </div>
+                    <button type="submit">Add Random Bike</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Request Bike</h2>
+                <form id="requestBikeForm">
+                    <div class="form-group">
+                        <label for="requestBikeId">Bike ID</label>
+                        <input type="text" id="requestBikeId" placeholder="Enter bike ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="renterName">Your Name</label>
+                        <input type="text" id="renterName" placeholder="Enter your name" required>
+                    </div>
+                    <button type="submit">Request Bike</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Return Bike</h2>
+                <form id="returnBikeForm">
+                    <div class="form-group">
+                        <label for="returnBikeId">Bike ID</label>
+                        <input type="text" id="returnBikeId" placeholder="Enter bike ID" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="returnLocation">Return Location</label>
+                        <select id="returnLocation" required>
+                            <option value="">Select location</option>
+                            <option value="Amsterdam">Amsterdam</option>
+                            <option value="Paris">Paris</option>
+                            <option value="Vilnius">Vilnius</option>
+                            <option value="Barcelona">Barcelona</option>
+                            <option value="London">London</option>
+                            <option value="New York">New York</option>
+                            <option value="Toronto">Toronto</option>
+                            <option value="Berlin">Berlin</option>
+                            <option value="Milan">Milan</option>
+                            <option value="Rome">Rome</option>
+                            <option value="Belgrade">Belgrade</option>
+                        </select>
+                    </div>
+                    <button type="submit">Return Bike</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="bikes-section">
+            <div class="bikes-header">
+                <h2>Available Bikes</h2>
+                <button class="refresh-btn" onclick="loadBikes()">🔄 Refresh</button>
+            </div>
+            <div id="bikesContainer">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading bikes...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load bikes on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBikes();
+        });
+
+        // Show message
+        function showMessage(text, type = 'success') {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.appendChild(message);
+
+            setTimeout(() => {
+                message.remove();
+            }, 3000);
+        }
+
+        // Load all bikes
+        async function loadBikes() {
+            const container = document.getElementById('bikesContainer');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading bikes...</p></div>';
+
+            try {
+                const response = await fetch('/bikes');
+                if (!response.ok) throw new Error('Failed to load bikes');
+
+                const bikes = await response.json();
+
+                if (bikes.length === 0) {
+                    container.innerHTML = '<div class="loading"><p>No bikes available. Add some bikes to get started!</p></div>';
+                    return;
+                }
+
+                container.innerHTML = '<div class="bikes-grid"></div>';
+                const grid = container.querySelector('.bikes-grid');
+
+                bikes.forEach(bike => {
+                    const card = createBikeCard(bike);
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error loading bikes:', error);
+                container.innerHTML = '<div class="loading"><p>Error loading bikes. Please try again.</p></div>';
+                showMessage('Failed to load bikes', 'error');
+            }
+        }
+
+        // Create bike card element
+        function createBikeCard(bike) {
+            const card = document.createElement('div');
+            card.className = `bike-card ${bike.status.toLowerCase()}`;
+
+            const statusText = bike.status.toLowerCase();
+            const shortId = bike.bikeId.substring(0, 8);
+
+            card.innerHTML = `
+                <div class="bike-header">
+                    <span class="bike-id" title="${bike.bikeId}">${shortId}...</span>
+                    <span class="status-badge ${statusText}">${bike.status}</span>
+                </div>
+                <div class="bike-info">
+                    <p><strong>Type:</strong> ${bike.bikeType || 'N/A'}</p>
+                    <p><strong>Location:</strong> ${bike.location || 'N/A'}</p>
+                    ${bike.renter ? `<p><strong>Renter:</strong> ${bike.renter}</p>` : ''}
+                </div>
+                <div class="bike-actions">
+                    ${bike.status === 'AVAILABLE' ? `
+                        <button onclick="quickRequest('${bike.bikeId}')">Quick Rent</button>
+                    ` : ''}
+                    ${bike.status === 'RENTED' || bike.status === 'REQUESTED' ? `
+                        <button onclick="quickReturn('${bike.bikeId}')">Quick Return</button>
+                    ` : ''}
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Quick request bike
+        async function quickRequest(bikeId) {
+            const renter = prompt('Enter your name:');
+            if (!renter) return;
+
+            try {
+                const response = await fetch(`/requestBike?bikeId=${encodeURIComponent(bikeId)}&renter=${encodeURIComponent(renter)}`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) throw new Error('Failed to request bike');
+
+                showMessage('Bike requested successfully!');
+                setTimeout(() => loadBikes(), 500);
+            } catch (error) {
+                console.error('Error requesting bike:', error);
+                showMessage('Failed to request bike', 'error');
+            }
+        }
+
+        // Quick return bike
+        async function quickReturn(bikeId) {
+            try {
+                const response = await fetch(`/returnBike?bikeId=${encodeURIComponent(bikeId)}&location=`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) throw new Error('Failed to return bike');
+
+                showMessage('Bike returned successfully!');
+                setTimeout(() => loadBikes(), 500);
+            } catch (error) {
+                console.error('Error returning bike:', error);
+                showMessage('Failed to return bike', 'error');
+            }
+        }
+
+        // Register random bike form
+        document.getElementById('randomBikeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bikeType = document.getElementById('randomBikeType').value;
+            const button = e.target.querySelector('button');
+
+            button.disabled = true;
+            button.textContent = 'Adding...';
+
+            try {
+                const response = await fetch(`/randomBike?bikeType=${encodeURIComponent(bikeType)}`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) throw new Error('Failed to add bike');
+
+                showMessage('Bike added successfully!');
+                document.getElementById('randomBikeType').value = '';
+                setTimeout(() => loadBikes(), 500);
+            } catch (error) {
+                console.error('Error adding bike:', error);
+                showMessage('Failed to add bike', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Add Random Bike';
+            }
+        });
+
+        // Request bike form
+        document.getElementById('requestBikeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bikeId = document.getElementById('requestBikeId').value;
+            const renter = document.getElementById('renterName').value;
+            const button = e.target.querySelector('button');
+
+            button.disabled = true;
+            button.textContent = 'Requesting...';
+
+            try {
+                const response = await fetch(`/requestBike?bikeId=${encodeURIComponent(bikeId)}&renter=${encodeURIComponent(renter)}`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) throw new Error('Failed to request bike');
+
+                showMessage('Bike requested successfully!');
+                document.getElementById('requestBikeId').value = '';
+                document.getElementById('renterName').value = '';
+                setTimeout(() => loadBikes(), 500);
+            } catch (error) {
+                console.error('Error requesting bike:', error);
+                showMessage('Failed to request bike', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Request Bike';
+            }
+        });
+
+        // Return bike form
+        document.getElementById('returnBikeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const bikeId = document.getElementById('returnBikeId').value;
+            const location = document.getElementById('returnLocation').value;
+            const button = e.target.querySelector('button');
+
+            button.disabled = true;
+            button.textContent = 'Returning...';
+
+            try {
+                const response = await fetch(`/returnBike?bikeId=${encodeURIComponent(bikeId)}&location=${encodeURIComponent(location)}`, {
+                    method: 'POST'
+                });
+
+                if (!response.ok) throw new Error('Failed to return bike');
+
+                showMessage('Bike returned successfully!');
+                document.getElementById('returnBikeId').value = '';
+                document.getElementById('returnLocation').value = '';
+                setTimeout(() => loadBikes(), 500);
+            } catch (error) {
+                console.error('Error returning bike:', error);
+                showMessage('Failed to return bike', 'error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Return Bike';
+            }
+        });
+    </script>
+</body>
+</html>
