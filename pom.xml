@@ -16,8 +16,6 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>payment-api</module>
-		<module>payment</module>
 		<module>rental</module>
 	</modules>
 

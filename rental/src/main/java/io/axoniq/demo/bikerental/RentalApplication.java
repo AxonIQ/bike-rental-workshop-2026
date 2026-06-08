@@ -1,7 +1,6 @@
 package io.axoniq.demo.bikerental;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.axoniq.demo.bikerental.commands.BikeStatus;
 import io.axoniq.demo.bikerental.common.DispatchTimeCommandDispatchInterceptor;
 import org.axonframework.config.Configuration;
 import org.axonframework.deadline.DeadlineManager;
@@ -19,7 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 @Import(AxonConfig.class)
-@EntityScan(basePackageClasses = {BikeStatus.class, SagaEntry.class, TokenEntry.class})
+@EntityScan(basePackageClasses = {TokenEntry.class})
 @SpringBootApplication
 public class RentalApplication {
 
