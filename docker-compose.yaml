@@ -5,8 +5,8 @@ networks:
 services:
   # PRIMARY node - first node in the cluster
   axonserver-1:
-    #image: docker.axoniq.io/axoniq/axonserver:2026.0.0-rc1
-    image: eu.gcr.io/axoniq-devops/axonserver:2026.0.0-SNAPSHOT-jdk-21-nonroot
+    image: axoniq/axonserver:2026.0.2-nonroot
+    #image: eu.gcr.io/axoniq-devops/axonserver:2026.0.0-SNAPSHOT-jdk-21-nonroot
     hostname: axonserver-1
     networks:
       - axon-cluster
