@@ -40,9 +40,4 @@ public class RentalApplication {
         return SimpleDeadlineManager.builder().scopeAwareProvider(configuration.scopeAwareProvider()).build();
     }
 
-    @Autowired
-    public void registerCommandInterceptor(Configuration configuration) {
-        configuration.commandBus().registerDispatchInterceptor(new DispatchTimeCommandDispatchInterceptor());
-    }
-
 }
