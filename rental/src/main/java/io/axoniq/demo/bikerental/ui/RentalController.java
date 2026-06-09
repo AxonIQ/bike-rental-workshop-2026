@@ -26,14 +26,9 @@ public class RentalController {
         this.commandGateway = commandGateway;
     }
 
-    @PostMapping("/generateBikes")
-    public CompletableFuture<Void> generateBikes(@RequestParam(value = "bikeType") String bikeType) {
-        CompletableFuture<Void> all = CompletableFuture.completedFuture(null);
-        for (int i = 0; i < BIKES.size(); i++) {
-            all = CompletableFuture.allOf(all,
-                                          commandGateway.send(new RegisterBikeCommand(BIKES.get(i).toString(), bikeType, randomLocation())));
-        }
-        return all;
+    @PostMapping("/randomBike")
+    public CompletableFuture<String> randomBike(@RequestParam(value = "bikeType") String bikeType) {
+        return commandGateway.send(new RegisterBikeCommand(UUID.randomUUID().toString(), bikeType, randomLocation()));
     }
 
     private String randomLocation() {
