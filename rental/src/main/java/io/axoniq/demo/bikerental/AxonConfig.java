@@ -8,6 +8,7 @@ import org.axonframework.serialization.json.JacksonSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class AxonConfig {
@@ -34,6 +35,7 @@ public class AxonConfig {
     }
 
     @Bean
+    @Primary
     @Qualifier("serializer")
     public Serializer serializer(ObjectMapper objectMapper) {
         return JacksonSerializer.builder()
