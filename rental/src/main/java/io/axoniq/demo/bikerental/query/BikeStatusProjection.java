@@ -19,14 +19,6 @@ public class BikeStatusProjection {
         this.bikeStatusRepository = bikeStatusRepository;
     }
 
-    @EventHandler
-    public void on(BikeRegisteredEvent event) {
-        // TODO Store Bike Status
-    }
-
-    //@QueryHandler(queryName = "findAll")
-    public List<BikeStatus> findAll(FindAllBikes findAllBikes) {
-        return bikeStatusRepository.findAll();
-    }
+    // TODO define projection
 
 }
