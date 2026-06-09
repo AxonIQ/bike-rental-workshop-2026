@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: Bike Rental
+
+#axon:
+#  eventhandling:
+#    processors:
+#      my-processor:
+#        mode: subscribing
