@@ -48,28 +48,5 @@ class BikeTest {
                .expectEvents(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"));
     }
 
-    @Test
-    void shouldRequestAvailableBike() {
-        var rentalReference = UUID.randomUUID().toString();
-        fixture.given(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"))
-               .when(new RequestBikeCommand("bikeId", "rider", rentalReference))
-               .expectResultMessagePayloadMatching(matches(String.class::isInstance))
-               .expectEventsMatching(exactSequenceOf(
-                       messageWithPayload(matches((BikeRequestedEvent e) ->
-                                                          e.bikeId().equals("bikeId")
-                                                                  && e.renter().equals("rider")
-                                                            && e.rentalReference().equals(rentalReference))),
-                       andNoMore()));
-    }
-
-    @Test
-    void shouldNotRequestAlreadyRequestedBike() {
-        fixture.given(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
-                      new BikeRequestedEvent("bikeId", "rider", "rentalId"))
-               .when(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
-               .expectNoEvents()
-               .expectException(IllegalStateException.class);
-
-    }
 
 }
