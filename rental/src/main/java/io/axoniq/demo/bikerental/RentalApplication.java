@@ -6,6 +6,8 @@ import io.axoniq.demo.bikerental.common.DispatchTimeCommandDispatchInterceptor;
 import io.axoniq.framework.axonserver.connector.api.AxonServerConnectionManager;
 import io.axoniq.framework.axonserver.connector.event.AggregateBasedAxonServerEventStorageEngine;
 import org.axonframework.eventsourcing.eventstore.EventStorageEngine;
+import org.axonframework.extension.spring.config.EventHandlerSelector;
+import org.axonframework.extension.spring.config.EventProcessorDefinition;
 import org.axonframework.messaging.eventhandling.conversion.EventConverter;
 import org.axonframework.messaging.eventhandling.processing.streaming.token.store.jpa.TokenEntry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +73,7 @@ public class RentalApplication {
         );
     }
 
-    /*
+
     @Bean
     public EventProcessorDefinition exampleProcessorDefinition() {
         return EventProcessorDefinition.pooledStreaming("example-processor")
@@ -85,7 +87,7 @@ public class RentalApplication {
                                                .tokenClaimInterval(5000)
                                        );
     }
-     */
+
 
     /*
     @Bean

@@ -57,15 +57,14 @@ class BikeTest {
                 .events(new BikeRequestedEvent("bikeId", "rider", rentalReference));
     }
 
-    /*
     @Test
     void shouldNotRequestAlreadyRequestedBike() {
-        fixture.given(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
+        fixture.given().events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
                       new BikeRequestedEvent("bikeId", "rider", "rentalId"))
-               .when(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
-               .expectNoEvents()
-               .expectException(IllegalStateException.class);
+               .when().command(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
+                .then()
+                .exception(IllegalStateException.class);
 
-    }*/
+    }
 
 }

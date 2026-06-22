@@ -1,9 +1,12 @@
 package io.axoniq.demo.bikerental.domain;
 
 import io.axoniq.demo.bikerental.events.*;
+import org.axonframework.eventsourcing.annotation.EventCriteriaBuilder;
 import org.axonframework.eventsourcing.annotation.EventSourcingHandler;
 import org.axonframework.eventsourcing.annotation.reflection.EntityCreator;
 import org.axonframework.extension.spring.stereotype.EventSourced;
+import org.axonframework.messaging.eventstreaming.EventCriteria;
+import org.axonframework.messaging.eventstreaming.Tag;
 
 // https://docs.axoniq.io/axon-framework-reference/5.1/migration/paths/aggregates/
 @EventSourced(tagKey = "bikeId")
@@ -67,5 +70,16 @@ public class Bike {
     protected void on(BikeInUseEvent event) {
         this.isAvailable = false;
         this.reservationConfirmed = true;
+    }
+
+    @EventCriteriaBuilder
+    private static EventCriteria resolveCriteria(String bikeId) {
+        return EventCriteria
+                        .havingTags(Tag.of("bikeId", bikeId))
+                        .andBeingOneOfTypes(
+                                BikeRegisteredEvent.class.getName(),
+                                BikeRequestedEvent.class.getName(),
+                                BikeReturnedEvent.class.getName()
+        );
     }
 }
