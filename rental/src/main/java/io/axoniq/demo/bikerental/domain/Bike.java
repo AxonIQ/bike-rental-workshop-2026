@@ -26,7 +26,12 @@ public class Bike {
         return reservedBy;
     }
 
+    public boolean isDamaged() {
+        return damaged;
+    }
+
     private boolean isAvailable;
+    private boolean damaged = false;
     private String reservedBy;
 
     public boolean isReservationConfirmed() {
@@ -72,6 +77,11 @@ public class Bike {
         this.reservationConfirmed = true;
     }
 
+    @EventSourcingHandler
+    protected void handle(BikeMarkedDamagedEvent event) {
+        this.damaged = true;
+    }
+
     @EventCriteriaBuilder
     private static EventCriteria resolveCriteria(String bikeId) {
         return EventCriteria
@@ -79,7 +89,8 @@ public class Bike {
                         .andBeingOneOfTypes(
                                 BikeRegisteredEvent.class.getName(),
                                 BikeRequestedEvent.class.getName(),
-                                BikeReturnedEvent.class.getName()
+                                BikeReturnedEvent.class.getName(),
+                                BikeMarkedDamagedEvent.class.getName()
         );
     }
 }

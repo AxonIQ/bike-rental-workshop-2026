@@ -2,8 +2,10 @@ package io.axoniq.demo.bikerental.domain;
 
 import io.axoniq.demo.bikerental.commands.RegisterBikeCommand;
 import io.axoniq.demo.bikerental.commands.RequestBikeCommand;
+import io.axoniq.demo.bikerental.events.BikeMarkedDamagedEvent;
 import io.axoniq.demo.bikerental.events.BikeRegisteredEvent;
 import io.axoniq.demo.bikerental.events.BikeRequestedEvent;
+import io.axoniq.demo.bikerental.events.BikeReturnedEvent;
 import org.axonframework.eventsourcing.configuration.EventSourcedEntityModule;
 import org.axonframework.eventsourcing.configuration.EventSourcingConfigurer;
 import org.axonframework.messaging.commandhandling.configuration.CommandHandlingModule;
@@ -66,5 +68,28 @@ class BikeTest {
                 .exception(IllegalStateException.class);
 
     }
+
+    @Test
+    void cannotRequestADamagedBike() {
+        fixture.given().events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
+                        new BikeMarkedDamagedEvent("bikeId"))
+                .when().command(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
+                .then()
+                .exception(IllegalStateException.class);
+
+    }
+
+    @Test
+    void cannotRequestADamagedBikeAfterReturn() {
+        fixture.given().events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
+                        new BikeReturnedEvent("bikeId", "Amsterdam"),
+                        new BikeMarkedDamagedEvent("bikeId"))
+                .when().command(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
+                .then()
+                .exception(IllegalStateException.class);
+
+    }
+
+
 
 }

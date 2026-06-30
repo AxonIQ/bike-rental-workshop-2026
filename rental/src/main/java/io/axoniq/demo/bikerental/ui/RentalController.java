@@ -1,10 +1,7 @@
 package io.axoniq.demo.bikerental.ui;
 
 import com.google.common.collect.Lists;
-import io.axoniq.demo.bikerental.commands.BikeStatus;
-import io.axoniq.demo.bikerental.commands.RegisterBikeCommand;
-import io.axoniq.demo.bikerental.commands.RequestBikeCommand;
-import io.axoniq.demo.bikerental.commands.ReturnBikeCommand;
+import io.axoniq.demo.bikerental.commands.*;
 import io.axoniq.demo.bikerental.query.FindAllBikes;
 import io.axoniq.demo.bikerental.query.FindOneBike;
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway;
@@ -58,6 +55,11 @@ public class RentalController {
     @PostMapping("/returnBike")
     public CompletableFuture<String> returnBike(@RequestParam("bikeId") String bikeId, @RequestParam("location") String location) {
         return commandGateway.send(new ReturnBikeCommand(bikeId, location != null ? location : randomLocation())).resultAs(String.class);
+    }
+
+    @PostMapping("/markDamaged/{bikeId}")
+    public CompletableFuture<String> markBikeDamaged(@RequestParam("bikeId") String bikeId) {
+        return commandGateway.send(new MarkBikeDamaged(bikeId)).resultAs(String.class);
     }
 
     @GetMapping("/bikes")
