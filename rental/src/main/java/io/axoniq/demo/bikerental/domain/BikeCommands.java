@@ -24,12 +24,8 @@ public class BikeCommands {
 
     //https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764666925523319&cot=14
     @CommandHandler
-    public String handle(RequestBikeCommand command, EventAppender appender, @InjectEntity Bike bike) throws Exception {
-        if (!bike.isAvailable() || bike.isDamaged()) {
-            throw new IllegalStateException("Bike is already rented");
-        }
+    public String handle(RequestBikeCommand command, EventAppender appender) throws Exception {
         appender.append(new BikeRequestedEvent(command.bikeId(), command.renter(), command.reference()));
-
         return command.reference();
     }
 
