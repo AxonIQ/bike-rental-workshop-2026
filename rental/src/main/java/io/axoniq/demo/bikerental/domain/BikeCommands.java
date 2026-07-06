@@ -17,7 +17,10 @@ public class BikeCommands {
 
     //https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764666925523340&cot=14
     @CommandHandler
-    public static String handle(RegisterBikeCommand command, EventAppender appender, ProcessingContext context) {
+    public static String handle(RegisterBikeCommand command, EventAppender appender, @InjectEntity DecisionModel registeredBike) {
+        if (registeredBike.registered) {
+            throw new IllegalStateException("Sorry, bike already exists");
+        }
         appender.append(new BikeRegisteredEvent(command.bikeId(), command.bikeType(), command.location()));
         return command.bikeId();
     }

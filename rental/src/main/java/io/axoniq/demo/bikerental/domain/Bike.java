@@ -9,7 +9,7 @@ import org.axonframework.messaging.eventstreaming.EventCriteria;
 import org.axonframework.messaging.eventstreaming.Tag;
 
 // https://docs.axoniq.io/axon-framework-reference/5.1/migration/paths/aggregates/
-@EventSourced(tagKey = "bikeId")
+@EventSourced
 public class Bike {
 
     private String bikeId;

@@ -24,17 +24,31 @@ class BikeTest {
     void setUp() {
         var bikeModule = EventSourcedEntityModule
                 .autodetected(String.class, Bike.class);
+        var decisionModel = EventSourcedEntityModule
+                .autodetected(String.class, DecisionModel.class);
         var commandHandlerModule = CommandHandlingModule.named("Rental")
                 .commandHandlers().autodetectedCommandHandlingComponent(c -> new BikeCommands());
         var configurer = EventSourcingConfigurer.create()
                 .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)))
-                .registerEntity(bikeModule);
+                .registerEntity(bikeModule)
+                .registerEntity(decisionModel);
         fixture = AxonTestFixture.with(configurer);
     }
 
     @AfterEach
     void tearDown() {
-            fixture.stop();
+        fixture.stop();
+    }
+
+    @Test
+    void ensuresUniqueness() {
+        fixture.given()
+                .events(new BikeRegisteredEvent("bike-123", "mountain", "amsterdam"))
+                .events(new BikeRegisteredEvent("bike-456", "mountain", "amsterdam"))
+                .when()
+                .command(new RegisterBikeCommand("bike-123", "rennrad", "amsterdam"))
+                .then()
+                .exception(IllegalStateException.class);
     }
 
     // https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764668702272970&cot=14
@@ -54,16 +68,16 @@ class BikeTest {
         fixture
                 .given()
                 .events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"))
-               .when().command(new RequestBikeCommand("bikeId", "rider", rentalReference))
-               .then()
+                .when().command(new RequestBikeCommand("bikeId", "rider", rentalReference))
+                .then()
                 .events(new BikeRequestedEvent("bikeId", "rider", rentalReference));
     }
 
     @Test
     void shouldNotRequestAlreadyRequestedBike() {
         fixture.given().events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
-                      new BikeRequestedEvent("bikeId", "rider", "rentalId"))
-               .when().command(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
+                        new BikeRequestedEvent("bikeId", "rider", "rentalId"))
+                .when().command(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
                 .then()
                 .exception(IllegalStateException.class);
 
@@ -89,7 +103,6 @@ class BikeTest {
                 .exception(IllegalStateException.class);
 
     }
-
 
 
 }
