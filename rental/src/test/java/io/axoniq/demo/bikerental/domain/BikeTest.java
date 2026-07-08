@@ -1,7 +1,9 @@
 package io.axoniq.demo.bikerental.domain;
 
-import io.axoniq.demo.bikerental.commands.RegisterBikeCommand;
+import io.axoniq.demo.bikerental.commands.registration.BikeLocation;
+import io.axoniq.demo.bikerental.commands.registration.RegisterBikeCommand;
 import io.axoniq.demo.bikerental.commands.RequestBikeCommand;
+import io.axoniq.demo.bikerental.commands.registration.UniqueBikeLocation;
 import io.axoniq.demo.bikerental.events.BikeMarkedDamagedEvent;
 import io.axoniq.demo.bikerental.events.BikeRegisteredEvent;
 import io.axoniq.demo.bikerental.events.BikeRequestedEvent;
@@ -24,11 +26,14 @@ class BikeTest {
     void setUp() {
         var bikeModule = EventSourcedEntityModule
                 .autodetected(String.class, Bike.class);
+        var uniqueBikeLocation = EventSourcedEntityModule
+                .autodetected(BikeLocation.class, UniqueBikeLocation.class);
         var commandHandlerModule = CommandHandlingModule.named("Rental")
                 .commandHandlers().autodetectedCommandHandlingComponent(c -> new BikeCommands());
         var configurer = EventSourcingConfigurer.create()
                 .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)))
-                .registerEntity(bikeModule);
+                .registerEntity(bikeModule)
+                .registerEntity(uniqueBikeLocation);
         fixture = AxonTestFixture.with(configurer);
     }
 

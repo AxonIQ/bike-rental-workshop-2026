@@ -1,8 +1,9 @@
 package io.axoniq.demo.bikerental.domain;
 
 import io.axoniq.demo.bikerental.commands.*;
+import io.axoniq.demo.bikerental.commands.registration.RegisterBikeCommand;
+import io.axoniq.demo.bikerental.commands.registration.UniqueBikeLocation;
 import io.axoniq.demo.bikerental.events.*;
-import org.axonframework.messaging.commandhandling.annotation.Command;
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler;
 import org.axonframework.messaging.core.unitofwork.ProcessingContext;
 import org.axonframework.messaging.eventhandling.gateway.EventAppender;
@@ -17,7 +18,13 @@ public class BikeCommands {
 
     //https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764666925523340&cot=14
     @CommandHandler
-    public static String handle(RegisterBikeCommand command, EventAppender appender, ProcessingContext context) {
+    public static String handle(RegisterBikeCommand command,
+                                EventAppender appender,
+                                @InjectEntity UniqueBikeLocation  uniqueBikeLocation,
+                                ProcessingContext context) {
+        if (uniqueBikeLocation.registered) {
+            throw new IllegalStateException("BikeRegistered already registered");
+        }
         appender.append(new BikeRegisteredEvent(command.bikeId(), command.bikeType(), command.location()));
         return command.bikeId();
     }

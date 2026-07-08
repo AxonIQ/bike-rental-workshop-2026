@@ -2,6 +2,7 @@ package io.axoniq.demo.bikerental.ui;
 
 import com.google.common.collect.Lists;
 import io.axoniq.demo.bikerental.commands.*;
+import io.axoniq.demo.bikerental.commands.registration.RegisterBikeCommand;
 import io.axoniq.demo.bikerental.query.FindAllBikes;
 import io.axoniq.demo.bikerental.query.FindOneBike;
 import org.axonframework.messaging.commandhandling.gateway.CommandGateway;
