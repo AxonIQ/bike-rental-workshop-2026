@@ -1,8 +1,9 @@
 package io.axoniq.demo.bikerental.domain;
 
 import io.axoniq.demo.bikerental.commands.*;
+import io.axoniq.demo.bikerental.commands.requestbike.IsBikeAvailable;
+import io.axoniq.demo.bikerental.commands.requestbike.RequestBikeCommand;
 import io.axoniq.demo.bikerental.events.*;
-import org.axonframework.messaging.commandhandling.annotation.Command;
 import org.axonframework.messaging.commandhandling.annotation.CommandHandler;
 import org.axonframework.messaging.core.unitofwork.ProcessingContext;
 import org.axonframework.messaging.eventhandling.gateway.EventAppender;
@@ -22,9 +23,21 @@ public class BikeCommands {
         return command.bikeId();
     }
 
-    //https://miro.com/app/board/uXjVGl17uZw=/?moveToWidget=3458764666925523319&cot=14
     @CommandHandler
-    public String handle(RequestBikeCommand command, EventAppender appender) throws Exception {
+    public String handle(RequestBikeCommand command,
+                         EventAppender appender,
+                         @InjectEntity(idProperty = "bikeId") IsBikeAvailable bikeAvailable
+                         ) throws Exception {
+
+        // is the bike requested
+        // is the bike registered
+        // is the bike damaged
+        if(bikeAvailable.bikeRented
+                || !bikeAvailable.bikeRegistered
+                || bikeAvailable.bikeDamaged) {
+            throw new IllegalStateException();
+        }
+
         appender.append(new BikeRequestedEvent(command.bikeId(), command.renter(), command.reference()));
         return command.reference();
     }

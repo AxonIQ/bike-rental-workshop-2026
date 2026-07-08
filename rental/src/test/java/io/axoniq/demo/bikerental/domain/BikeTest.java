@@ -1,7 +1,8 @@
 package io.axoniq.demo.bikerental.domain;
 
 import io.axoniq.demo.bikerental.commands.RegisterBikeCommand;
-import io.axoniq.demo.bikerental.commands.RequestBikeCommand;
+import io.axoniq.demo.bikerental.commands.requestbike.IsBikeAvailable;
+import io.axoniq.demo.bikerental.commands.requestbike.RequestBikeCommand;
 import io.axoniq.demo.bikerental.events.BikeMarkedDamagedEvent;
 import io.axoniq.demo.bikerental.events.BikeRegisteredEvent;
 import io.axoniq.demo.bikerental.events.BikeRequestedEvent;
@@ -24,11 +25,14 @@ class BikeTest {
     void setUp() {
         var bikeModule = EventSourcedEntityModule
                 .autodetected(String.class, Bike.class);
+        var isBikeAvailable = EventSourcedEntityModule
+                .autodetected(String.class, IsBikeAvailable.class);
         var commandHandlerModule = CommandHandlingModule.named("Rental")
                 .commandHandlers().autodetectedCommandHandlingComponent(c -> new BikeCommands());
         var configurer = EventSourcingConfigurer.create()
                 .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)))
-                .registerEntity(bikeModule);
+                .registerEntity(bikeModule)
+                .registerEntity(isBikeAvailable);
         fixture = AxonTestFixture.with(configurer);
     }
 
@@ -61,7 +65,8 @@ class BikeTest {
 
     @Test
     void shouldNotRequestAlreadyRequestedBike() {
-        fixture.given().events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
+        fixture.given().events(
+                new BikeRegisteredEvent("bikeId", "city", "Amsterdam"),
                       new BikeRequestedEvent("bikeId", "rider", "rentalId"))
                .when().command(new RequestBikeCommand("bikeId", "rider", UUID.randomUUID().toString()))
                 .then()
