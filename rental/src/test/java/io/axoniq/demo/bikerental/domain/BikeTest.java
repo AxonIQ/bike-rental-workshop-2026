@@ -49,6 +49,26 @@ class BikeTest {
     }
 
     @Test
+    void shouldEnsureUniquenessPerLocation() {
+        fixture.given()
+                .events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"))
+                .when()
+                .command(new RegisterBikeCommand("bikeId", "city", "Amsterdam"))
+                .then()
+                .exception(IllegalStateException.class);
+    }
+
+    @Test
+    void shouldRegisterSameBikeIdInDifferentLocations() {
+        fixture.given()
+                .events(new BikeRegisteredEvent("bikeId", "city", "Amsterdam"))
+                .when()
+                .command(new RegisterBikeCommand("bikeId", "city", "Berlin"))
+                .then()
+                .events(new BikeRegisteredEvent("bikeId", "city", "Berlin"));
+    }
+
+    @Test
     void shouldRequestAvailableBike() {
         var rentalReference = UUID.randomUUID().toString();
         fixture
