@@ -20,15 +20,19 @@ class CourseSubscriptionTest {
 
     @BeforeEach
     void setUp() {
-       /* var subscriptionDecisionModel = EventSourcedEntityModule
-                .autodetected(SubscriptionId.class, CourseSubscriptionDecisionModel.class);*/
+       var subscriptionDecisionModel = EventSourcedEntityModule
+                .autodetected(SubscriptionId.class, SubscriptionDecisionModel.class);
+
+        var subscriptionsDecisionModel = EventSourcedEntityModule
+                .autodetected(SubscriptionId.class, StudentSubscriptions.class);
 
         var commandHandlerModule = CommandHandlingModule.named("Courses")
                 .commandHandlers().autodetectedCommandHandlingComponent(c -> new CourseCommands());
 
         var configurer = EventSourcingConfigurer.create()
-                .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)));
-        //.registerEntity(subscriptionDecisionModel);
+                .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)))
+        .registerEntity(subscriptionDecisionModel)
+                .registerEntity(subscriptionsDecisionModel);
 
         fixture = AxonTestFixture.with(configurer);
     }

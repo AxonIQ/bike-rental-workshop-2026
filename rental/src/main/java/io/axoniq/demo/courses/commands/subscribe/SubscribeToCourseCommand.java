@@ -5,10 +5,10 @@ import org.axonframework.modelling.annotation.TargetEntityId;
 
 @Command(namespace = "courses", name = "SubscribeToCourseCommand", routingKey = "courseId")
 public record SubscribeToCourseCommand(
-        @TargetEntityId
         String courseId,
         String subscriberId
 ) {
+    @TargetEntityId
     public SubscriptionId subscriptionId() {
         return SubscriptionId.of(courseId, subscriberId);
     }
