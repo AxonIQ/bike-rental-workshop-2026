@@ -7,5 +7,6 @@ import org.axonframework.messaging.eventhandling.annotation.Event;
 public record BikeRegisteredEvent(
         @EventTag String bikeId,
         String bikeType,
+        @EventTag
         String location) {
 }
