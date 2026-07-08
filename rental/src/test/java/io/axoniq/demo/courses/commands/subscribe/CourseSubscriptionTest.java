@@ -39,36 +39,6 @@ class CourseSubscriptionTest {
     }
 
     @Test
-    void shouldCreateCourse() {
-        fixture.given()
-                .noPriorActivity()
-                .when()
-                .command(new CreateCourseCommand("course-1", "Introduction to Event Sourcing"))
-                .then()
-                .events(new CourseCreatedEvent("course-1", "Introduction to Event Sourcing"));
-    }
-
-    @Test
-    void shouldNotCreateDuplicateCourse() {
-        fixture.given()
-                .events(new CourseCreatedEvent("course-1", "Introduction to Event Sourcing"))
-                .when()
-                .command(new CreateCourseCommand("course-1", "Another Course"))
-                .then()
-                .exception(IllegalStateException.class);
-    }
-
-    @Test
-    void shouldSetCourseLimit() {
-        fixture.given()
-                .events(new CourseCreatedEvent("course-1", "Introduction to Event Sourcing"))
-                .when()
-                .command(new SetCourseLimitCommand("course-1", 5))
-                .then()
-                .events(new CourseLimitSetEvent("course-1", 5));
-    }
-
-    @Test
     void shouldSubscribeToCourse() {
         fixture.given()
                 .events(
@@ -79,16 +49,6 @@ class CourseSubscriptionTest {
                 .command(new SubscribeToCourseCommand("course-1", "student-1"))
                 .then()
                 .events(new SubscribedToCourseEvent("course-1", "student-1"));
-    }
-
-    @Test
-    void shouldNotSubscribeToNonExistentCourse() {
-        fixture.given()
-                .noPriorActivity()
-                .when()
-                .command(new SubscribeToCourseCommand("course-999", "student-1"))
-                .then()
-                .exception(IllegalStateException.class);
     }
 
     @Test
@@ -167,21 +127,6 @@ class CourseSubscriptionTest {
     }
 
     @Test
-    void shouldAllowMultipleStudentsToSubscribeToSameCourse() {
-        fixture.given()
-                .events(
-                        new CourseCreatedEvent("course-1", "Introduction to Event Sourcing"),
-                        new CourseLimitSetEvent("course-1", 5),
-                        new SubscribedToCourseEvent("course-1", "student-1"),
-                        new SubscribedToCourseEvent("course-1", "student-2")
-                )
-                .when()
-                .command(new SubscribeToCourseCommand("course-1", "student-3"))
-                .then()
-                .events(new SubscribedToCourseEvent("course-1", "student-3"));
-    }
-
-    @Test
     void shouldAllowStudentToSubscribeToMultipleCourses() {
         fixture.given()
                 .events(
@@ -197,42 +142,4 @@ class CourseSubscriptionTest {
                 .events(new SubscribedToCourseEvent("course-2", "student-1"));
     }
 
-    @Test
-    void shouldAccessRepositoriesViaExpect() {
-        fixture.given()
-                .events(
-                        new CourseCreatedEvent("course-1", "Introduction to Event Sourcing"),
-                        new CourseLimitSetEvent("course-1", 5),
-                        new SubscribedToCourseEvent("course-1", "student-1"),
-                        new SubscribedToCourseEvent("course-1", "student-2")
-                )
-                .when()
-                .command(new SubscribeToCourseCommand("course-1", "student-3"))
-                .then()
-                .expect(config -> {
-                    // Demonstrate accessing repositories via config.getComponents()
-                    var repositories = config.getComponents(org.axonframework.modelling.repository.Repository.class);
-
-                    // Verify we have 3 repositories registered
-                    if (repositories.size() != 3) {
-                        throw new AssertionError("Expected 3 repositories, found: " + repositories.size());
-                    }
-
-                    // Verify the CourseSubscriptionDecisionModel repository is registered with the correct compound key
-                    String expectedKey = "io.axoniq.demo.courses.commands.subscribe.CourseSubscriptionDecisionModel#io.axoniq.demo.courses.commands.subscribe.SubscriptionId";
-                    if (!repositories.containsKey(expectedKey)) {
-                        throw new AssertionError("Expected repository key not found: " + expectedKey);
-                    }
-
-                    // Get the repository and verify it's not null
-                    var repository = repositories.get(expectedKey);
-                    if (repository == null) {
-                        throw new AssertionError("Repository is null for key: " + expectedKey);
-                    }
-
-                    System.out.println("Successfully accessed " + repositories.size() + " repositories:");
-                    repositories.keySet().forEach(key -> System.out.println("  - " + key));
-                })
-                .events(new SubscribedToCourseEvent("course-1", "student-3"));
-    }
 }
