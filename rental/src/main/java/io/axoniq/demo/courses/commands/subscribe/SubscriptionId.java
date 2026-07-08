@@ -6,8 +6,4 @@ public record SubscriptionId(String courseId, String subscriberId) {
         return new SubscriptionId(courseId, subscriberId);
     }
 
-    @Override
-    public String toString() {
-        return courseId + "-" + subscriberId;
-    }
 }

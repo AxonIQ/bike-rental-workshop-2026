@@ -2,9 +2,7 @@ package io.axoniq.demo.courses.commands.subscribe;
 
 import io.axoniq.demo.courses.commands.coursecreation.CreateCourseCommand;
 import io.axoniq.demo.courses.commands.coursecreation.SetCourseLimitCommand;
-import io.axoniq.demo.courses.domain.CourseCapacityDecisionModel;
 import io.axoniq.demo.courses.domain.CourseCommands;
-import io.axoniq.demo.courses.domain.CourseDecisionModel;
 import io.axoniq.demo.courses.events.CourseCreatedEvent;
 import io.axoniq.demo.courses.events.CourseLimitSetEvent;
 import io.axoniq.demo.courses.events.SubscribedToCourseEvent;
@@ -22,21 +20,15 @@ class CourseSubscriptionTest {
 
     @BeforeEach
     void setUp() {
-        var courseDecisionModel = EventSourcedEntityModule
-                .autodetected(String.class, CourseDecisionModel.class);
-        var capacityDecisionModel = EventSourcedEntityModule
-                .autodetected(String.class, CourseCapacityDecisionModel.class);
-        var subscriptionDecisionModel = EventSourcedEntityModule
-                .autodetected(SubscriptionId.class, CourseSubscriptionDecisionModel.class);
+       /* var subscriptionDecisionModel = EventSourcedEntityModule
+                .autodetected(SubscriptionId.class, CourseSubscriptionDecisionModel.class);*/
 
         var commandHandlerModule = CommandHandlingModule.named("Courses")
                 .commandHandlers().autodetectedCommandHandlingComponent(c -> new CourseCommands());
 
         var configurer = EventSourcingConfigurer.create()
-                .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)))
-                .registerEntity(courseDecisionModel)
-                .registerEntity(capacityDecisionModel)
-                .registerEntity(subscriptionDecisionModel);
+                .modelling(c -> c.messaging(m -> m.registerCommandHandlingModule(commandHandlerModule)));
+        //.registerEntity(subscriptionDecisionModel);
 
         fixture = AxonTestFixture.with(configurer);
     }
