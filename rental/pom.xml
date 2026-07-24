@@ -16,7 +16,7 @@
         <maven.compiler.target>25</maven.compiler.target>
         <java.version>25</java.version>
         <!--axon.version>5.1.0-RC2</axon.version>-->
-        <jackson.version>2.21.2</jackson.version>
+        <jackson.version>2.21.4</jackson.version>
         <axon.version>4.13.0</axon.version>
     </properties>
 
